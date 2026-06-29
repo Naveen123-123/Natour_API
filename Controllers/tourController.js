@@ -2,6 +2,17 @@ const fs = require("fs");
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
 );
+
+exports.checkID = (req, res, next, val) => {
+  const tour = tours.find((el) => el.id === req.params.id * 1);
+  if (req.params.id * 1 > tours.length || !tour) {
+    return res.status(404).json({
+      status: "Failed",
+      message: "Invalid ID",
+    });
+  }
+  next();
+};
 exports.getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
@@ -15,12 +26,12 @@ exports.getAllTours = (req, res) => {
 exports.getTour = (req, res) => {
   const id = req.params.id * 1;
   const tour = tours.find((el) => el.id === id);
-  if (!tour) {
-    return res.status(404).json({
-      status: "Failed",
-      message: "Invalid ID",
-    });
-  }
+  //   if (!tour) {
+  //     return res.status(404).json({
+  //       status: "Failed",
+  //       message: "Invalid ID",
+  //     });
+  //   }
   res.status(200).json({
     status: "success",
     data: {
@@ -48,12 +59,12 @@ exports.createTour = (req, res) => {
 exports.updateTour = (req, res) => {
   const id = req.params.id * 1;
   const tourIndex = tours.findIndex((el) => el.id === id);
-  if (tourIndex === -1) {
-    return res.status(404).json({
-      status: "Failed",
-      message: "Invalid ID",
-    });
-  }
+  //   if (tourIndex === -1) {
+  //     return res.status(404).json({
+  //       status: "Failed",
+  //       message: "Invalid ID",
+  //     });
+  //   }
   tours[tourIndex] = {
     ...tours[tourIndex],
     ...req.body,
@@ -83,12 +94,12 @@ exports.updateTour = (req, res) => {
 exports.deleteTour = (req, res) => {
   const id = Number(req.params.id);
   const tourIndex = tours.findIndex((el) => el.id === id);
-  if (tourIndex === -1) {
-    return res.status(404).json({
-      status: "Failed",
-      message: "Invalid ID",
-    });
-  }
+  //   if (tourIndex === -1) {
+  //     return res.status(404).json({
+  //       status: "Failed",
+  //       message: "Invalid ID",
+  //     });
+  //   }
   const updatedTours = tours.filter((t) => t.id !== id);
   fs.writeFile(
     `${__dirname}/dev-data/data/tours-simple.json`,
