@@ -6,6 +6,7 @@ const {
   updateTour,
   checkID,
   deleteTour,
+  checkBodyParams,
 } = require("../Controllers/tourController");
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const router = express.Router();
 // It will be like a pipeline we can pass through this phase -> validations,transformations etc
 router.param("id", checkID);
 
-router.route("/").get(getAllTours).post(createTour);
+router.route("/").get(getAllTours).post(checkBodyParams, createTour);
 router.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
 
 module.exports = router;

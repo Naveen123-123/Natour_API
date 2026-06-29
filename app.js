@@ -11,6 +11,9 @@ app.use((req, res, next) => {
   req.timeStamp = new Date().toISOString();
   next();
 });
+// To access the static files from the repo
+// Inbuilt middleware for accessing static files in the repo
+app.use(express.static(`${__dirname}/public`));
 
 // Mounting the Routes
 // Using routes as a middlewares
