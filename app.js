@@ -6,7 +6,10 @@ const morgan = require("morgan");
 
 // Middlewares
 app.use(express.json());
-app.use(morgan("dev"));
+// This is how can we use env variables to configure things for different env's
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 app.use((req, res, next) => {
   req.timeStamp = new Date().toISOString();
   next();

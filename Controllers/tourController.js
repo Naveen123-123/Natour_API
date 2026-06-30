@@ -1,14 +1,12 @@
-const fs = require("fs");
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
-);
+const fs = require('fs');
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
-exports.checkID = (req, res, next, val) => {
+exports.checkID = (req, res, next) => {
   const tour = tours.find((el) => el.id === req.params.id * 1);
   if (req.params.id * 1 > tours.length || !tour) {
     return res.status(404).json({
-      status: "Failed",
-      message: "Invalid ID",
+      status: 'Failed',
+      message: 'Invalid ID',
     });
   }
   next();
@@ -19,8 +17,8 @@ exports.checkBodyParams = (req, res, next) => {
   const { price, name } = req.body;
   if (!price || !name) {
     return res.status(404).json({
-      status: "Failed",
-      message: "Name and Price fields are required",
+      status: 'Failed',
+      message: 'Name and Price fields are required',
     });
   }
   next();
@@ -28,7 +26,7 @@ exports.checkBodyParams = (req, res, next) => {
 
 exports.getAllTours = (req, res) => {
   res.status(200).json({
-    status: "success",
+    status: 'success',
     results: tours.length,
     timestamp: req.timeStamp,
     data: {
@@ -40,7 +38,7 @@ exports.getTour = (req, res) => {
   const id = req.params.id * 1;
   const tour = tours.find((el) => el.id === id);
   res.status(200).json({
-    status: "success",
+    status: 'success',
     data: {
       tour,
     },
@@ -50,18 +48,14 @@ exports.createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = { id: newId, ...req.body };
   tours.push(newTour);
-  fs.writeFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
-    JSON.stringify(tours),
-    (error) => {
-      res.status(201).json({
-        status: "success",
-        data: {
-          tour: newTour,
-        },
-      });
-    },
-  );
+  fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), () => {
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour,
+      },
+    });
+  });
 };
 exports.updateTour = (req, res) => {
   const id = req.params.id * 1;
@@ -70,27 +64,23 @@ exports.updateTour = (req, res) => {
     ...tours[tourIndex],
     ...req.body,
   };
-  fs.writeFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
-    JSON.stringify(tours),
-    (error) => {
-      if (error) {
-        res.status(201).json({
-          status: "Failed to update the file",
-          data: {
-            tour: tours[tourIndex],
-          },
-        });
-      } else {
-        res.status(200).json({
-          status: "success",
-          data: {
-            tour: tours[tourIndex],
-          },
-        });
-      }
-    },
-  );
+  fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), (error) => {
+    if (error) {
+      res.status(201).json({
+        status: 'Failed to update the file',
+        data: {
+          tour: tours[tourIndex],
+        },
+      });
+    } else {
+      res.status(200).json({
+        status: 'success',
+        data: {
+          tour: tours[tourIndex],
+        },
+      });
+    }
+  });
 };
 exports.deleteTour = (req, res) => {
   const id = Number(req.params.id);
@@ -102,17 +92,17 @@ exports.deleteTour = (req, res) => {
     (error) => {
       if (error) {
         res.status(201).json({
-          status: "Failed to update the file",
+          status: 'Failed to update the file',
           data: {
             tour: tours[tourIndex],
           },
         });
       } else {
         res.status(204).json({
-          status: "success",
+          status: 'success',
           data: null,
         });
       }
-    },
+    }
   );
 };
