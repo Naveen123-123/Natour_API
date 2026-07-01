@@ -21,13 +21,13 @@ module.exports = {
     },
   },
   rules: {
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-        parser: 'flow',
-      },
-    ],
+    // 'prettier/prettier': [
+    //   'error',
+    //   {
+    //     singleQuote: true,
+    //     parser: 'flow',
+    //   },
+    // ],
     'no-console': 'off',
 
     // Express middleware/handlers legitimately mix `return res.send(...)`
@@ -51,6 +51,10 @@ module.exports = {
         version: '>=18.0.0',
         ignores: ['modules'],
       },
+    ],
+    'import/no-extraneous-dependencies': [
+      'error',
+      { devDependencies: false, optionalDependencies: false, peerDependencies: false },
     ],
     'node/no-missing-import': 'off',
 
