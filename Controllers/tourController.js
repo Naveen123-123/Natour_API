@@ -2,8 +2,20 @@ const Tour = require("../models/tourModel");
 
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    // Preparing the query
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "sort", "limit", "fields"];
+    excludedFields.forEach((el) => delete queryObj[el]);
 
+    // Fetching the data from the database and getting query instance so that we can apply mongoose methods on it. We can apply multiple methods on the query instance and then finally execute it to get the data.
+    const query = Tour.find(queryObj);
+
+    // Tour.find().where("duration").equals(5).where("difficulty").equals("easy");
+
+    // Executing the query
+    const tours = await query;
+
+    // Sending the response
     res.status(200).json({
       status: "success",
       results: tours.length,
