@@ -1,8 +1,9 @@
 const express = require("express");
+const morgan = require("morgan");
 const tourRouter = require("./Routes/tourRoutes");
 const userRouter = require("./Routes/userRoutes");
+
 const app = express();
-const morgan = require("morgan");
 
 // Middlewares
 app.use(express.json());
