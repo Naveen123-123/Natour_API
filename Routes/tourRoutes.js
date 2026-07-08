@@ -5,6 +5,7 @@ const {
   getTour,
   updateTour,
   deleteTour,
+  getTop5Tours,
 } = require("../Controllers/tourController");
 
 const router = express.Router();
@@ -13,7 +14,7 @@ const router = express.Router();
 // We can put some common logic here for different routes.
 // It will be like a pipeline we can pass through this phase -> validations,transformations etc
 // router.param("id", checkID);
-
+router.route("/top-5-cheap").get(getTop5Tours, getAllTours);
 router.route("/").get(getAllTours).post(createTour);
 router.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
 
