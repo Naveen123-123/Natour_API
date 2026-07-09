@@ -1,5 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
+const APPError = require("./utils/appError");
+const globalErrorHandler = require("./Controllers/errorController");
 const tourRouter = require("./Routes/tourRoutes");
 const userRouter = require("./Routes/userRoutes");
 
@@ -28,11 +30,10 @@ app.use("/api/v1/users", userRouter);
 // If the above routes are not matched then this route will be executed
 // Order is important here. This route should be defined after all the other routes.
 app.all("*", (req, res, next) => {
-  res.status(404).json({
-    status: "fail",
-    message: `Can't find ${req.originalUrl} on this server`,
-  });
-  next();
+  next(new APPError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
+// Global error handling middleware
+app.use(globalErrorHandler);
 
 module.exports = app;
