@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+// const validator = require("validator");
 // const slugify = require("slugify");
 
 const tourSchema = new mongoose.Schema(
@@ -7,10 +8,22 @@ const tourSchema = new mongoose.Schema(
       type: String,
       required: [true, "A tour must have a name"],
       unique: true,
+      maxLength: [40, "A tour name must have less or equal than 40 characters"],
+      minLength: [10, "A tour name must have more or equal than 10 characters"],
+      // validate: [validator.isAlpha, "Tour name must only contain characters"],
     },
     price: {
       type: Number,
       required: [true, "A tour must have a price"],
+    },
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator(val) {
+          return val < this.price;
+        },
+        message: "Discount price ({VALUE}) should be below regular price",
+      },
     },
     rating: {
       type: Number,
@@ -19,6 +32,8 @@ const tourSchema = new mongoose.Schema(
     ratingsAverage: {
       type: Number,
       default: 4.5,
+      min: [1, "Rating must be above 1.0"],
+      max: [5, "Rating must be below 5.0"],
     },
     ratingsQuantity: {
       type: Number,
@@ -36,6 +51,10 @@ const tourSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, "A tour must have a difficulty"],
+      enum: {
+        values: ["easy", "medium", "difficult"],
+        message: "Difficulty is either: easy, medium, difficult",
+      },
     },
     summary: {
       type: String,
@@ -67,7 +86,7 @@ const tourSchema = new mongoose.Schema(
 //  We can use virtual properties to create new properties that are derived from existing properties.
 // For example, we can create a virtual property called durationWeeks that is derived from the duration property.
 //  We can use this virtual property to get the duration in weeks instead of days.
-tourSchema.virtual("durationWeeks").get(function () {
+tourSchema.virtual("durationWeeks").get(function getDuration() {
   return this.duration / 7;
 });
 

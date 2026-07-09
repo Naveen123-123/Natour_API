@@ -93,6 +93,7 @@ exports.updateTour = async (req, res) => {
     res.status(400).json({
       status: "Failed",
       message: "Failed to update the data",
+      error: err,
     });
   }
 };
