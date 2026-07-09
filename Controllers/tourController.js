@@ -110,3 +110,92 @@ exports.deleteTour = async (req, res) => {
     });
   }
 };
+exports.getTourStats = async (req, res) => {
+  try {
+    // This is a aggregation pipeline. It is a way to process data in MongoDB. It is a way to perform complex queries on the data. It is a way to perform complex transformations on the data. It is a way to perform complex calculations on the data. It is a way to perform complex aggregations on the data. It is a way to perform complex groupings on the data. It is a way to perform complex sorting on the data. It is a way to perform complex filtering on the data. It is a way to perform complex projections on the data. It is a way to perform complex lookups on the data. It is a way to perform complex unwinds on the data. It is a way to perform complex facets on the data. It is a way to perform complex buckets on the data. It is a way to perform complex bucket auto on the data. It is a way to perform complex geo near on the data. It is a way to perform complex graph lookup on the data.
+    // Each stage output is input for the next stage
+    const stats = await Tour.aggregate([
+      { $match: { ratingsAverage: { $gte: 4.5 } } },
+      {
+        $group: {
+          _id: { $toUpper: "$difficulty" },
+          averageRating: { $avg: "$ratingsAverage" },
+          averagePrice: { $avg: "$price" },
+          maxPrice: { $max: "$price" },
+          minPrice: { $min: "$price" },
+          totalTours: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          averagePrice: 1, // sorts ascending order based on averagePrice. If we want to sort in descending order we can use -1 instead of 1.
+        },
+      },
+      // stages can be repeated multiple times. We can add more stages to the pipeline to perform more complex operations on the data.
+      // {
+      //   $match: {
+      //     totalTours: { $gte: 2 }, // filters the data based on the totalTours field. It will only return the documents where totalTours is greater than or equal to 2.
+      //   },
+      // },
+    ]);
+    res.status(200).json({
+      status: "success",
+      data: {
+        stats,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "Failed",
+      message: "Failed to update the data",
+    });
+  }
+};
+
+exports.getMonthlyPlans = async (req, res) => {
+  try {
+    const year = req.params.year * 1; // 2021
+    const monthlyPlans = await Tour.aggregate([
+      {
+        $unwind: "$startDates",
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$startDates" },
+          numTourStarts: { $sum: 1 },
+          tours: { $push: "$name" },
+        },
+      },
+      {
+        $addFields: { month: "$_id" },
+      },
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+      {
+        $sort: { numTourStarts: -1 },
+      },
+    ]);
+    res.status(200).json({
+      status: "success",
+      data: {
+        monthlyPlans,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "Failed",
+      message: "Failed to update the data",
+    });
+  }
+};
