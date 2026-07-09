@@ -24,4 +24,15 @@ app.use(express.static(`${__dirname}/public`));
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
+// Handling default routes
+// If the above routes are not matched then this route will be executed
+// Order is important here. This route should be defined after all the other routes.
+app.all("*", (req, res, next) => {
+  res.status(404).json({
+    status: "fail",
+    message: `Can't find ${req.originalUrl} on this server`,
+  });
+  next();
+});
+
 module.exports = app;
