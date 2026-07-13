@@ -45,6 +45,11 @@ userSchema.pre("save", async function encripting() {
   this.passwordConfirm = undefined;
 });
 
+userSchema.methods.correctPassword = async function passwordCheck(candidatePassword, userPassword) {
+  // It will internally convert the candidatePassword to hash and compare it with the userPassword which is already hashed. It will return true if they are same else false.
+  return bcrypt.compare(candidatePassword, userPassword);
+};
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
