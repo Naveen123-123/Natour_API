@@ -22,14 +22,14 @@ const sendResponseTocken = (user, statusCode, res) => {
   res.cookie("jwt", token, cookieOptions);
 
   // Remove password from the response
-  const updatedUser = { ...user, password: undefined };
+  // const updatedUser = { ...user, password: undefined };
 
   // Sending token via response
   res.status(statusCode).json({
     status: "Success",
     token,
     data: {
-      user: updatedUser,
+      user,
     },
   });
 };
