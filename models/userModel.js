@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+  },
   passwordConfirm: {
     type: String,
     required: [true, "Please confirm your password"],
@@ -58,6 +62,11 @@ userSchema.pre("save", function updatePasswordChangedAt() {
   if (!this.isModified("password") || this.isNew) return;
 
   this.passwordChangedAt = Date.now() - 1000;
+  // next();
+});
+userSchema.pre(/^find/, function exludeActive() {
+  // This will get trigger only when a query starts with find
+  this.find({ active: { $ne: false } });
   // next();
 });
 

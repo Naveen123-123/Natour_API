@@ -10,6 +10,16 @@ const getToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
+const sendResponseTocken = (user, statusCode, res) => {
+  res.status(statusCode).json({
+    status: "Success",
+    token: getToken(user._id),
+    data: {
+      user,
+    },
+  });
+};
+
 exports.signUp = catchAsynch(async (req, res, next) => {
   // This way ensure's that role cannot be set by the user during signup, preventing unauthorized role assignment.
   // We will only store the necessary fields for user creation, and any additional fields like role will be set by the server or through an admin interface.
@@ -22,15 +32,7 @@ exports.signUp = catchAsynch(async (req, res, next) => {
     role: req.body.role,
   });
   // eslint-disable-next-line no-underscore-dangle
-  const id = newUser._id;
-  const token = getToken(id);
-  res.status(201).json({
-    status: "success",
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  sendResponseTocken(newUser, 201, res);
 });
 
 exports.login = catchAsynch(async (req, res, next) => {
@@ -51,13 +53,7 @@ exports.login = catchAsynch(async (req, res, next) => {
     return next(new APPError("Incorrect email or password", 401));
   }
 
-  // eslint-disable-next-line no-underscore-dangle
-  const id = user._id;
-  const token = getToken(id);
-  res.status(200).json({
-    status: "success",
-    token,
-  });
+  sendResponseTocken(user, 200, res);
 });
 
 exports.forgotPassword = catchAsynch(async (req, res, next) => {
@@ -118,15 +114,7 @@ exports.resetPassword = catchAsynch(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  // eslint-disable-next-line no-underscore-dangle
-  const token = getToken(user._id);
-  res.status(200).json({
-    status: "success",
-    token,
-  });
-
-  // 3) Update changedPasswordAt property for the user
-  // 4) Log the user in, send JWT
+  sendResponseTocken(user, 200, res);
 });
 
 exports.protect = catchAsynch(async (req, res, next) => {
@@ -166,3 +154,21 @@ exports.restrictTo =
     }
     next();
   };
+
+exports.updatePassword = catchAsynch(async (req, res, next) => {
+  // 1) Get user from collection
+  const user = await User.findById(req.params.id).select("+password");
+  if (!user) {
+    return next(new APPError("User does not exist.", 404));
+  }
+  // 2) Check if posted current password is currect
+  if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
+    return next(new APPError("Password did not match.", 401));
+  }
+  // 3) if so , update password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+  // 4) log user in and send jwt
+  sendResponseTocken(user, 200, res);
+});
