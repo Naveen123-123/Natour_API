@@ -11,11 +11,25 @@ const getToken = (id) =>
   });
 
 const sendResponseTocken = (user, statusCode, res) => {
+  // eslint-disable-next-line no-underscore-dangle
+  const token = getToken(user._id);
+  const cookieOptions = {
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === "Production") cookieOptions.secure = true;
+  // Sending token via cockiee
+  res.cookie("jwt", token, cookieOptions);
+
+  // Remove password from the response
+  const updatedUser = { ...user, password: undefined };
+
+  // Sending token via response
   res.status(statusCode).json({
     status: "Success",
-    token: getToken(user._id),
+    token,
     data: {
-      user,
+      user: updatedUser,
     },
   });
 };
