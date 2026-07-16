@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+// const User = require("./userModel");
 // const validator = require("validator");
 // const slugify = require("slugify");
 
@@ -99,6 +100,7 @@ const tourSchema = new mongoose.Schema(
     // slug: String,
     images: [String],
     startDates: [Date],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   },
   {
     toJSON: { virtuals: true },
@@ -114,6 +116,14 @@ tourSchema.virtual("durationWeeks").get(function getDuration() {
   return this.duration / 7;
 });
 
+// To get the guide users into tours documents
+tourSchema.pre(/^find/, async function addGuides() {
+  this.populate({
+    path: "guides",
+    select: "-__v -passwordChangedAt",
+  });
+});
+
 // // Middleware to generate slug before saving the document
 // // Trigger this on save and create operations. It will not trigger on update operations / insertMany operations.
 // TODO : This needs a re-visit
@@ -122,6 +132,12 @@ tourSchema.virtual("durationWeeks").get(function getDuration() {
 //   // next();
 // });
 
+// List guides in the tours schema
+// This will be triggered when create and save operations
+// Embedding the docs nestedly
+// tourSchema.pre("save", async function addGuides() {
+//   this.guides = await Promise.all(this.guides.map((id) => User.findById(id)));
+// });
 const Tour = mongoose.model("Tour", tourSchema);
 
 module.exports = Tour;
