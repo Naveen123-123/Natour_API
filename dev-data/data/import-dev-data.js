@@ -23,7 +23,7 @@ mongoose
 
 const importData = async () => {
   try {
-    const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours-simple.json`, "utf-8"));
+    const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, "utf-8"));
     await Tour.create(tours);
     console.log("Data successfully loaded");
   } catch (err) {

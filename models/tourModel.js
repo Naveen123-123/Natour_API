@@ -60,6 +60,30 @@ const tourSchema = new mongoose.Schema(
       type: String,
       required: [true, "A tour must have a summary"],
     },
+    startLocation: {
+      // Geo Json
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number], // longitude and lattitude
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: "Point",
+          enum: ["Point"],
+        },
+        coordinates: [Number], // longitude and lattitude
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
     description: {
       type: String,
       required: [true, "A tour must have a description"],
