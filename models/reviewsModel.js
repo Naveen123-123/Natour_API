@@ -37,6 +37,14 @@ const reviewsSchema = new mongoose.Schema(
   }
 );
 
+// To get the user and tour data embeded into reviews
+reviewsSchema.pre(/^find/, async function addGuides() {
+  this.populate({
+    path: "user",
+    select: "name",
+  });
+});
+
 const Review = mongoose.model("Review", reviewsSchema);
 
 module.exports = Review;

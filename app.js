@@ -9,6 +9,7 @@ const APPError = require("./utils/appError");
 const globalErrorHandler = require("./Controllers/errorController");
 const tourRouter = require("./Routes/tourRoutes");
 const userRouter = require("./Routes/userRoutes");
+const reviewRouter = require("./Routes/reviewRoutes");
 
 const app = express();
 // Middlewares
@@ -69,6 +70,7 @@ app.use(express.static(`${__dirname}/public`));
 // Using routes as a middlewares
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 // Handling default routes
 // If the above routes are not matched then this route will be executed
