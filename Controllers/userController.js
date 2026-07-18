@@ -1,44 +1,28 @@
 const catchAsynch = require("../utils/catchAsynch");
 const User = require("../models/userModel");
+const { deleteOne, updateOne, getAll, getOne } = require("./handlerFactory");
 
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: "Error",
-    message: "This route is not defined yet!",
+    message: "Please sign up!",
   });
 };
 
-exports.getAllUsers = catchAsynch(async (req, res, next) => {
-  // EXECUTE QUERY
-  const users = await User.find();
-
-  // Sending the response
-  res.status(200).json({
-    status: "success",
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: "Error",
-    message: "This route is not defined yet!",
-  });
-};
-
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: "Error",
-    message: "This route is not defined yet!",
-  });
-};
-
-exports.deleteUser = catchAsynch(async (req, res) => {
+exports.deleteCurrentUser = catchAsynch(async (req, res) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
   res.status(204).json({
     status: "Success",
     data: null,
   });
 });
+
+exports.getMe = (req, _, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
+exports.deleteUser = deleteOne(User);
+exports.getAllUsers = getAll(User);
+exports.getUser = getOne(User);
+exports.updateUser = updateOne(User);
