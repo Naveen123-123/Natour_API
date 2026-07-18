@@ -24,13 +24,13 @@ router.use("/:tourId/reviews", reviewRouter);
 // It will be like a pipeline we can pass through this phase -> validations,transformations etc
 // router.param("id", checkID);
 router.route("/tour-stats").get(getTourStats);
-router.route("/monthly-plans/:year").get(getMonthlyPlans);
+router.route("/monthly-plans/:year").get(restrictTo("admin", "lead-guide"), getMonthlyPlans);
 router.route("/top-5-cheap").get(getTop5Tours, getAllTours);
-router.route("/").get(protect, getAllTours).post(createTour);
+router.route("/").get(getAllTours).post(protect, restrictTo("admin", "lead-guide"), createTour);
 router
   .route("/:id")
   .get(getTour)
-  .patch(updateTour)
+  .patch(restrictTo("admin", "lead-guide"), updateTour)
   .delete(protect, restrictTo("admin", "lead-guide"), deleteTour);
 
 module.exports = router;

@@ -9,7 +9,7 @@ exports.createUser = (req, res) => {
   });
 };
 
-exports.deleteCurrentUser = catchAsynch(async (req, res) => {
+exports.deleteMe = catchAsynch(async (req, res) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
   res.status(204).json({
     status: "Success",

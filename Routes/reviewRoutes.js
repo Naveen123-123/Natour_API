@@ -10,6 +10,7 @@ const {
 const { protect, restrictTo } = require("../Controllers/authController");
 
 const router = express.Router({ mergeParams: true });
+router.use(protect); // Protect all the routes
 
 // Due to the mergeParams now it will trigger this for both the routes.
 // Post /tour/23434/reviews
@@ -17,8 +18,12 @@ const router = express.Router({ mergeParams: true });
 // Get /reviews
 router
   .route("/")
-  .get(protect, restrictTo("user", "guide"), getAllReviews)
-  .post(protect, restrictTo("user", "guide"), setTourAndUserId, createReview);
-router.route("/:id").get(getReview).delete(deleteReview).patch(updateReview);
+  .get(getAllReviews)
+  .post(restrictTo("user", "admin"), setTourAndUserId, createReview);
+router
+  .route("/:id")
+  .get(getReview)
+  .delete(restrictTo("user", "admin"), deleteReview)
+  .patch(restrictTo("user", "admin"), updateReview);
 
 module.exports = router;
