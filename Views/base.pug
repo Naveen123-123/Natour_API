@@ -1,0 +1,12 @@
+doctype html
+html
+head
+    title Natours | #{tour}
+    link(rel='stylesheet', href='/css/style.css')
+    link(rel='shortcut icon', type='image/png', href='img/favicon.png')
+body
+    h1=tour
+    h2=user.toUpperCase() 
+    - const x = 9 //- Non buffered code - it will not write in the browser
+    h3= x*3 
+    p This is just some text

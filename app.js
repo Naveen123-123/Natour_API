@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const rateLimit = require("express-rate-limit");
 const xss = require("xss-clean");
 const sanitize = require("express-mongo-sanitize");
@@ -12,6 +13,9 @@ const userRouter = require("./Routes/userRoutes");
 const reviewRouter = require("./Routes/reviewRoutes");
 
 const app = express();
+
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "Views"));
 // Middlewares
 
 // Secure http headers
@@ -68,6 +72,13 @@ app.use(express.static(`${__dirname}/public`));
 
 // Mounting the Routes
 // Using routes as a middlewares
+app.get("/", (req, res) => {
+  res.status(200).render("base", {
+    title: "Natours",
+    tour :"The Forest Hiker",
+    user: "Naveen"
+  });
+});
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
