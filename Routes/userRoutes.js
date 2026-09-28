@@ -9,6 +9,7 @@ const {
   getMe,
   updateMe,
   uploadUserPhoto,
+  resizeUserPhoto,
 } = require("../Controllers/userController");
 const {
   signUp,
@@ -31,7 +32,7 @@ router.use(protect); // It will protect the routes after this statements as midd
 router.patch("/updatePassword/:id", updatePassword);
 router.delete("/deleteUser", deleteMe);
 router.route("/me").get(getMe, getUser);
-router.patch("/updateMe", uploadUserPhoto, updateMe);
+router.patch("/updateMe", uploadUserPhoto, resizeUserPhoto, updateMe);
 
 router.use(restrictTo("admin"));
 
