@@ -45,7 +45,10 @@ const userSchema = new mongoose.Schema({
       message: "Passwords are not the same",
     },
   },
-  photo: String,
+  photo: {
+    type: String,
+    default: "default.jpg",
+  },
 });
 
 // Encrypting the password before saving it to the database. We are using bcrypt library to encrypt the password. We are using pre middleware to encrypt the password before saving it to the database. We are using async function because bcrypt.hash() is an async function. We are using this.isModified() method to check if the password is modified or not. If the password is not modified, we will not encrypt it again. We are using this.passwordConfirm = undefined; to delete the passwordConfirm field from the database because we don't need to store it in the database. It is only used for validation purpose.
