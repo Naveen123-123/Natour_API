@@ -9,7 +9,9 @@ const {
   getTourStats,
   getMonthlyPlans,
   getToursWithin,
-  getDistances
+  getDistances,
+  uploadTourImages,
+  resizeTourImages,
 } = require("../Controllers/tourController");
 const { protect, restrictTo } = require("../Controllers/authController");
 const reviewRouter = require("./reviewRoutes");
@@ -32,15 +34,13 @@ router.route("/").get(getAllTours).post(protect, restrictTo("admin", "lead-guide
 router
   .route("/:id")
   .get(getTour)
-  .patch(restrictTo("admin", "lead-guide"), updateTour)
+  .patch(protect, restrictTo("admin", "lead-guide"), uploadTourImages, resizeTourImages, updateTour)
   .delete(protect, restrictTo("admin", "lead-guide"), deleteTour);
 
-router
-  .route('/tours-within/:distance/center/:latlng/unit/:unit')
-  .get(getToursWithin);
+router.route("/tours-within/:distance/center/:latlng/unit/:unit").get(getToursWithin);
 // /tours-within?distance=233&center=-40,45&unit=mi
 // /tours-within/233/center/-40,45/unit/mi
 
-router.route('/distances/:latlng/unit/:unit').get(getDistances);
+router.route("/distances/:latlng/unit/:unit").get(getDistances);
 
 module.exports = router;
