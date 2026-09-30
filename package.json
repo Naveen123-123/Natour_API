@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",

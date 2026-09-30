@@ -5,12 +5,14 @@ const xss = require("xss-clean");
 const sanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const cors = require("cors");
 const hpp = require("hpp");
 const APPError = require("./utils/appError");
 const globalErrorHandler = require("./Controllers/errorController");
 const tourRouter = require("./Routes/tourRoutes");
 const userRouter = require("./Routes/userRoutes");
 const reviewRouter = require("./Routes/reviewRoutes");
+
 
 const app = express();
 
@@ -27,6 +29,18 @@ app.use(express.json({ limit: "10kb" }));
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+// 1) GLOBAL MIDDLEWARES
+// Implement CORS
+app.use(cors());
+// Access-Control-Allow-Origin *
+// api.natours.com, front-end natours.com
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+
+app.options('*', cors());
+// app.options('/api/v1/tours/:id', cors());
 
 // Data sanitization aginest NoSql query injection
 // ex :    "email" : {"$ge":""} allows access to login with correct password
